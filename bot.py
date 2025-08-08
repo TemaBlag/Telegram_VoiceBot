@@ -14,9 +14,9 @@ from telethon.tl.custom import Button
 from pydub import AudioSegment
 
 # ===== Config =====
-api_id = int(os.getenv("API_ID"))
-api_hash = os.getenv("API_HASH")
-bot_token = os.getenv("BOT_TOKEN")
+API_ID = int(os.getenv("API_ID"))
+API_HASH = os.getenv("API_HASH")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "small")
 MAX_FILE_MB = float(os.getenv("MAX_FILE_MB", "25"))  
 
@@ -24,7 +24,7 @@ MAX_FILE_MB = float(os.getenv("MAX_FILE_MB", "25"))
 nest_asyncio.apply()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-client = TelegramClient('bot', api_id, api_hash)
+client = TelegramClient('bot', API_ID, API_HASH)
 model = whisper.load_model(WHISPER_MODEL)
 
 user_settings = {}  # {user_id: {"mode": "v2t"/"mp3"/"t2s", "lang": "en"/"auto"/...}}
@@ -107,7 +107,7 @@ def _too_large(event) -> bool:
 
 # ===== Handlers =====
 async def main():
-    await client.start(bot_token=bot_token)
+    await client.start(bot_token=BOT_TOKEN)
 
     @client.on(events.NewMessage(pattern='/start'))
     async def start_handler(event):
