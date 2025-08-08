@@ -6,6 +6,7 @@ import tempfile
 import textwrap
 
 import nest_asyncio
+from dotenv import load_dotenv
 from faster_whisper import WhisperModel
 from gtts import gTTS
 from langdetect import detect
@@ -14,11 +15,13 @@ from telethon.tl.custom import Button
 from pydub import AudioSegment
 
 # ===== Config =====
+load_dotenv()  # optional .env support; does not override existing env
+
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 WHISPER_MODEL = os.getenv("WHISPER_MODEL", "base")
-MAX_FILE_MB = float(os.getenv("MAX_FILE_MB", "25"))  
+MAX_FILE_MB = float(os.getenv("MAX_FILE_MB", "25"))
 
 # ===== Init =====
 nest_asyncio.apply()
