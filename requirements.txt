@@ -1,6 +1,6 @@
 numpy==1.26.4
 telethon
-openai-whisper
+faster-whisper==1.0.3
 pydub
 gTTS
 langdetect

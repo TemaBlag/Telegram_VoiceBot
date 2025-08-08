@@ -6,7 +6,7 @@ import tempfile
 import textwrap
 
 import nest_asyncio
-import whisper
+from faster_whisper import WhisperModel
 from gtts import gTTS
 from langdetect import detect
 from telethon import TelegramClient, events
@@ -25,7 +25,8 @@ nest_asyncio.apply()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 client = TelegramClient('bot', API_ID, API_HASH)
-model = whisper.load_model(WHISPER_MODEL)
+# Faster-Whisper runs on CPU by default; we set compute_type for memory efficiency
+model = WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8")
 
 user_settings = {}  # {user_id: {"mode": "v2t"/"mp3"/"t2s", "lang": "en"/"auto"/...}}
 
@@ -63,11 +64,13 @@ async def _whisper_transcribe(wav_bytes: bytes, lang: str) -> str:
             tmp_wav.flush()
             path = tmp_wav.name
         try:
+            # faster-whisper returns (segments, info)
             if lang == "auto":
-                res = model.transcribe(path, fp16=False)
+                segments, _ = model.transcribe(path)
             else:
-                res = model.transcribe(path, language=lang, fp16=False)
-            return (res.get("text") or "").strip()
+                segments, _ = model.transcribe(path, language=lang)
+            text = " ".join(seg.text for seg in segments).strip()
+            return text
         finally:
             try:
                 os.remove(path)
